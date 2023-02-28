@@ -43,7 +43,6 @@ namespace KeyneceTool
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -52,18 +51,12 @@ namespace KeyneceTool
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.button7 = new System.Windows.Forms.Button();
-            this.textBox9 = new System.Windows.Forms.TextBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
-            this.button8 = new System.Windows.Forms.Button();
-            this.textBox11 = new System.Windows.Forms.TextBox();
-            this.textBox12 = new System.Windows.Forms.TextBox();
-            this.button9 = new System.Windows.Forms.Button();
+            this.listBox1 = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(76, 69);
+            this.textBox1.Location = new System.Drawing.Point(12, 31);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(233, 21);
             this.textBox1.TabIndex = 0;
@@ -71,7 +64,7 @@ namespace KeyneceTool
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(360, 69);
+            this.textBox2.Location = new System.Drawing.Point(296, 31);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(233, 21);
             this.textBox2.TabIndex = 1;
@@ -79,7 +72,7 @@ namespace KeyneceTool
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(603, 68);
+            this.button1.Location = new System.Drawing.Point(539, 30);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 2;
@@ -89,7 +82,7 @@ namespace KeyneceTool
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(76, 200);
+            this.textBox3.Location = new System.Drawing.Point(12, 84);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(233, 21);
             this.textBox3.TabIndex = 3;
@@ -97,7 +90,7 @@ namespace KeyneceTool
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(603, 200);
+            this.button2.Location = new System.Drawing.Point(539, 84);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 4;
@@ -107,7 +100,7 @@ namespace KeyneceTool
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(603, 283);
+            this.button3.Location = new System.Drawing.Point(539, 137);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 5;
@@ -117,7 +110,7 @@ namespace KeyneceTool
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(76, 283);
+            this.textBox4.Location = new System.Drawing.Point(12, 137);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(233, 21);
             this.textBox4.TabIndex = 6;
@@ -125,28 +118,28 @@ namespace KeyneceTool
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(360, 283);
+            this.textBox5.Location = new System.Drawing.Point(296, 137);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(233, 21);
             this.textBox5.TabIndex = 7;
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(360, 202);
+            this.textBox6.Location = new System.Drawing.Point(296, 86);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(233, 21);
             this.textBox6.TabIndex = 8;
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(360, 345);
+            this.textBox7.Location = new System.Drawing.Point(296, 199);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(233, 21);
             this.textBox7.TabIndex = 11;
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(603, 343);
+            this.button4.Location = new System.Drawing.Point(539, 197);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 10;
@@ -156,7 +149,7 @@ namespace KeyneceTool
             // 
             // textBox8
             // 
-            this.textBox8.Location = new System.Drawing.Point(76, 343);
+            this.textBox8.Location = new System.Drawing.Point(12, 197);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(233, 21);
             this.textBox8.TabIndex = 9;
@@ -164,7 +157,7 @@ namespace KeyneceTool
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(684, 200);
+            this.button5.Location = new System.Drawing.Point(620, 84);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.TabIndex = 12;
@@ -174,7 +167,7 @@ namespace KeyneceTool
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(684, 283);
+            this.button6.Location = new System.Drawing.Point(620, 137);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 13;
@@ -182,18 +175,10 @@ namespace KeyneceTool
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(74, 415);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(206, 23);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "label1";
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(74, 54);
+            this.label2.Location = new System.Drawing.Point(10, 16);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 12);
             this.label2.TabIndex = 15;
@@ -201,8 +186,10 @@ namespace KeyneceTool
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(358, 54);
+            this.label3.Location = new System.Drawing.Point(294, 16);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 12);
             this.label3.TabIndex = 16;
@@ -211,7 +198,7 @@ namespace KeyneceTool
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(74, 185);
+            this.label4.Location = new System.Drawing.Point(10, 69);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(47, 12);
             this.label4.TabIndex = 17;
@@ -220,7 +207,7 @@ namespace KeyneceTool
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(358, 187);
+            this.label5.Location = new System.Drawing.Point(294, 71);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
             this.label5.TabIndex = 18;
@@ -229,7 +216,7 @@ namespace KeyneceTool
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(74, 268);
+            this.label6.Location = new System.Drawing.Point(10, 122);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(47, 12);
             this.label6.TabIndex = 19;
@@ -238,7 +225,7 @@ namespace KeyneceTool
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(358, 268);
+            this.label7.Location = new System.Drawing.Point(294, 122);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(53, 12);
             this.label7.TabIndex = 20;
@@ -247,7 +234,7 @@ namespace KeyneceTool
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(74, 328);
+            this.label8.Location = new System.Drawing.Point(10, 182);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(47, 12);
             this.label8.TabIndex = 21;
@@ -256,86 +243,30 @@ namespace KeyneceTool
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(358, 330);
+            this.label9.Location = new System.Drawing.Point(294, 184);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(53, 12);
             this.label9.TabIndex = 22;
             this.label9.Text = "读取长度";
             // 
-            // button7
+            // listBox1
             // 
-            this.button7.Location = new System.Drawing.Point(603, 107);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(75, 23);
-            this.button7.TabIndex = 25;
-            this.button7.Text = "连接";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
-            // 
-            // textBox9
-            // 
-            this.textBox9.Location = new System.Drawing.Point(360, 108);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(233, 21);
-            this.textBox9.TabIndex = 24;
-            this.textBox9.Text = "8501";
-            // 
-            // textBox10
-            // 
-            this.textBox10.Location = new System.Drawing.Point(76, 108);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(233, 21);
-            this.textBox10.TabIndex = 23;
-            this.textBox10.Text = "127.0.0.1";
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(603, 146);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(75, 23);
-            this.button8.TabIndex = 30;
-            this.button8.Text = "连接";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
-            // 
-            // textBox11
-            // 
-            this.textBox11.Location = new System.Drawing.Point(360, 147);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(233, 21);
-            this.textBox11.TabIndex = 29;
-            this.textBox11.Text = "8501";
-            // 
-            // textBox12
-            // 
-            this.textBox12.Location = new System.Drawing.Point(76, 147);
-            this.textBox12.Name = "textBox12";
-            this.textBox12.Size = new System.Drawing.Size(233, 21);
-            this.textBox12.TabIndex = 28;
-            this.textBox12.Text = "127.0.0.1";
-            // 
-            // button9
-            // 
-            this.button9.Location = new System.Drawing.Point(360, 398);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(75, 23);
-            this.button9.TabIndex = 31;
-            this.button9.Text = "button9";
-            this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
+            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.HorizontalScrollbar = true;
+            this.listBox1.ItemHeight = 12;
+            this.listBox1.Location = new System.Drawing.Point(12, 244);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(701, 436);
+            this.listBox1.TabIndex = 59;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button9);
-            this.Controls.Add(this.button8);
-            this.Controls.Add(this.textBox11);
-            this.Controls.Add(this.textBox12);
-            this.Controls.Add(this.button7);
-            this.Controls.Add(this.textBox9);
-            this.Controls.Add(this.textBox10);
+            this.ClientSize = new System.Drawing.Size(725, 692);
+            this.Controls.Add(this.listBox1);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
@@ -344,7 +275,6 @@ namespace KeyneceTool
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.textBox7);
@@ -383,7 +313,6 @@ namespace KeyneceTool
 		private System.Windows.Forms.TextBox textBox8;
 		private System.Windows.Forms.Button button5;
 		private System.Windows.Forms.Button button6;
-		private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
@@ -392,13 +321,7 @@ namespace KeyneceTool
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.TextBox textBox9;
-        private System.Windows.Forms.TextBox textBox10;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.TextBox textBox11;
-        private System.Windows.Forms.TextBox textBox12;
-        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.ListBox listBox1;
     }
 }
 

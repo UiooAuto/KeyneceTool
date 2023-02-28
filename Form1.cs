@@ -22,7 +22,8 @@ namespace KeyneceTool
 		public Form1()
 		{
 			InitializeComponent();
-			Control.CheckForIllegalCrossThreadCalls = false;  //程序加载时取消跨线程检查
+            this.Text = "天津信息缘科技有限公司-基恩士上位链路通信协议 v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Control.CheckForIllegalCrossThreadCalls = false;  //程序加载时取消跨线程检查
 		}
 
 		public void ClickConnectBtn(ref SocketUtils plc, TextBox ip, TextBox port, Button btn)
@@ -200,35 +201,6 @@ namespace KeyneceTool
 			}
 		}
 
-		public void read()
-		{
-			int i = 0;
-			while (readOn)
-			{
-				if (i<10)
-				{
-					i++;
-				}
-				else
-				{
-					i = 0;
-				}
-				string str = "";
-				ReadResult<short[]> readResult = plc1.Read16("D1500", 2);
-				if (readResult.isSuccess)
-				{
-					foreach (int v1 in readResult.result)
-					{
-						//string str1 = Convert.ToString(v1, 16);
-						str = str + v1 + ",";
-					}
-					label1.Text = str;
-					Console.WriteLine(str+ " " + i);
-				}
-			}
-			
-		}
-
 		public void write()
 		{
 
@@ -244,29 +216,6 @@ namespace KeyneceTool
 
 		}
 
-        private void button7_Click(object sender, EventArgs e)
-        {
-			ClickConnectBtn(ref plc2, textBox10, textBox9, button7);
-		}
-
-        private void button8_Click(object sender, EventArgs e)
-		{
-			ClickConnectBtn(ref plc3, textBox12, textBox11, button8);
-		}
-
-        private void button9_Click(object sender, EventArgs e)
-        {
-			int a = 0;
-            if (a < 1)
-            {
-                MessageBox.Show("1");
-            }
-            else if (a < 2)
-            {
-                MessageBox.Show("2");
-            }
-        }
-
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
 		{
             if (t != null)
@@ -274,5 +223,10 @@ namespace KeyneceTool
 				t.Abort();
             }
 		}
-	}
+        public void Show(string str)
+        {
+            listBox1.Items.Add(DateTime.Now.ToString("HH:mm:ss.fff") + "- " + str);
+            listBox1.SelectedIndex = listBox1.Items.Count - 1;
+        }
+    }
 }
