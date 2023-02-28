@@ -6,20 +6,21 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace KeyneceTool
+namespace SocketConnect
 {
-    public class SocketUtils
+    public class KeyneceTool
     {
         public Socket socket;
         public IPAddress ipAddress;
         public int serverPort;
         public IPEndPoint ipEndPoint;
-        public int overTime = 1000;
         public Ping ping;
         int times = 3;//重连次数
         int wait = 1000;//每次重连前等待多久
+        public int ConnectTimeOut = 1000;
+        static object lock1 = new object();
 
-        public SocketUtils(string serverIp, int serverPort)
+        public KeyneceTool(string serverIp, int serverPort)
         {
             this.ipAddress = IPAddress.Parse(serverIp);
             this.serverPort = serverPort;
@@ -27,9 +28,9 @@ namespace KeyneceTool
             this.ping = new Ping();
         }
 
-        public bool Ping()
+        public bool IpAddressPing()
         {
-            PingReply pingReply = ping.Send(this.ipAddress, this.overTime);
+            PingReply pingReply = ping.Send(this.ipAddress, this.ConnectTimeOut);
             if (pingReply.Status == IPStatus.Success)
             {
                 return true;
@@ -57,11 +58,11 @@ namespace KeyneceTool
         {
             try
             {
-                if (Ping())
+                if (IpAddressPing())
                 {
                     this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    this.socket.SendTimeout = overTime;
-                    this.socket.ReceiveTimeout = overTime;
+                    this.socket.SendTimeout = ConnectTimeOut;
+                    this.socket.ReceiveTimeout = ConnectTimeOut;
                     this.socket.Connect(this.ipEndPoint);
                 }
                 else
@@ -100,8 +101,8 @@ namespace KeyneceTool
             }
             try
             {
-                ((IDisposable)this).Dispose();
                 ping.Dispose();
+                ((IDisposable)this).Dispose();
             }
             catch
             {
@@ -109,20 +110,18 @@ namespace KeyneceTool
         }
 
         #region 读写底层
-        public bool sendto(string cmd)
+        public bool Sendto(byte[] cmd)
         {
             if (socket != null)
             {
                 int i;
-                if (string.IsNullOrWhiteSpace(cmd))
+                if (cmd == null)
                 {
                     return false;
                 }
-                byte[] buffer = new byte[1024 * 1024];
-                buffer = Encoding.ASCII.GetBytes(cmd + "\r\n");
                 try
                 {
-                    i = socket.Send(buffer);
+                    i = socket.Send(cmd);
                 }
                 catch
                 {
@@ -152,7 +151,7 @@ namespace KeyneceTool
         {
             if (socket != null)
             {
-                byte[] recBytes = new byte[1024 * 1024];
+                byte[] recBytes = new byte[1024];
                 try
                 {
                     a = socket.Receive(recBytes);
@@ -177,6 +176,37 @@ namespace KeyneceTool
 
         }
 
+        /// <summary>
+        /// 与服务器发起一次交互
+        /// </summary>
+        /// <param name="cmd">发送给服务器的命令</param>
+        /// <returns>从服务器接收到的返回数据</returns>
+        public byte[] SendAndRecivefrom(byte[] cmd, out int recNum)
+        {
+            lock (lock1)
+            {
+                byte[] recBytes;
+                bool sendOK = Sendto(cmd);
+                if (sendOK)
+                {
+                    recBytes = Recivefrom(out recNum);
+                    if (recNum == 0)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return recBytes;
+                    }
+                }
+                else
+                {
+                    recNum = 0;
+                    return null;
+                }
+            }
+        }
+
         #endregion
 
 
@@ -185,22 +215,20 @@ namespace KeyneceTool
         public bool Write(string address, ushort cmd)
         {
             int readLength;
-            bool b = sendto("WR " + address + ".U " + cmd + "\r");
-            if (b)
+            string cmdStr = "WR " + address + ".U " + cmd + "\r";
+            byte[] recBytes = SendAndRecivefrom(Encoding.ASCII.GetBytes(cmdStr), out readLength);
+
+            if (recBytes != null)
             {
-                byte[] bytes = Recivefrom(out readLength);
-                if (bytes != null)
+                string str = Encoding.ASCII.GetString(recBytes, 0, readLength);
+                if ("OK\r\n".Equals(str))
                 {
-                    string str = Encoding.ASCII.GetString(bytes, 0, readLength);
-                    if ("OK\r\n".Equals(str))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        //MessageBox.Show("错误信息" + str);
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    //MessageBox.Show("错误信息" + str);
+                    return false;
                 }
             }
             return false;
@@ -209,22 +237,20 @@ namespace KeyneceTool
         public bool Write(string address, short cmd)
         {
             int readLength;
-            bool b = sendto("WR " + address + ".S " + cmd + "\r");
-            if (b)
+            string cmdStr = "WR " + address + ".S " + cmd + "\r";
+            byte[] recBytes = SendAndRecivefrom(Encoding.ASCII.GetBytes(cmdStr), out readLength);
+
+            if (recBytes != null)
             {
-                byte[] bytes = Recivefrom(out readLength);
-                if (bytes != null)
+                string str = Encoding.ASCII.GetString(recBytes, 0, readLength);
+                if ("OK\r\n".Equals(str))
                 {
-                    string str = Encoding.ASCII.GetString(bytes, 0, readLength);
-                    if ("OK\r\n".Equals(str))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        //MessageBox.Show("错误信息" + str);
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    //MessageBox.Show("错误信息" + str);
+                    return false;
                 }
             }
             return false;
@@ -232,116 +258,96 @@ namespace KeyneceTool
 
         public bool Write(string address, ushort[] cmd)
         {
-            string str = "";
+            string cmdStr = "";
             int readLength;
             for (int i = 0; i < cmd.Length; i++)
             {
-                str = str + " " + cmd[i];
+                cmdStr = cmdStr + " " + cmd[i];
             }
-            //MessageBox.Show("WRS " + address + ".U " + cmd.Length + str + "\r");
-            bool b = sendto("WRS " + address + ".U " + cmd.Length + str + "\r");
-            if (b)
+            cmdStr = "WRS " + address + ".U " + cmd.Length + cmdStr + "\r";
+            byte[] recBytes = SendAndRecivefrom(Encoding.ASCII.GetBytes(cmdStr), out readLength);
+
+            if (recBytes != null)
             {
-                byte[] bytes = Recivefrom(out readLength);
-                if (bytes != null)
+                string recStr = Encoding.ASCII.GetString(recBytes, 0, readLength);
+                if ("OK\r\n".Equals(recStr))
                 {
-                    str = Encoding.ASCII.GetString(bytes, 0, readLength);
-                    if ("OK\r\n".Equals(str))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        //MessageBox.Show(str);
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    //MessageBox.Show(str);
+                    return false;
                 }
             }
-
-            return b;
+            return false;
         }
 
         public bool Write(string address, short[] cmd)
         {
-            string str = "";
+            string cmdStr = "";
             int readLength;
             for (int i = 0; i < cmd.Length; i++)
             {
-                str = str + " " + cmd[i];
+                cmdStr = cmdStr + " " + cmd[i];
             }
-            //MessageBox.Show("WRS " + address + ".U " + cmd.Length + str + "\r");
-            bool b = sendto("WRS " + address + ".S " + cmd.Length + str + "\r");
-            if (b)
+            cmdStr = "WRS " + address + ".S " + cmd.Length + cmdStr + "\r";
+            byte[] recBytes = SendAndRecivefrom(Encoding.ASCII.GetBytes(cmdStr), out readLength);
+            if (recBytes != null)
             {
-                byte[] bytes = Recivefrom(out readLength);
-                if (bytes != null)
+                string recStr = Encoding.ASCII.GetString(recBytes, 0, readLength);
+                if ("OK\r\n".Equals(recStr))
                 {
-                    str = Encoding.ASCII.GetString(bytes, 0, readLength);
-                    if ("OK\r\n".Equals(str))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        //MessageBox.Show(str);
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-
-            return b;
+            return false;
         }
 
         public bool Write(string address, uint cmd)
         {
-            string str = "";
             int readLength;
-            //MessageBox.Show("WR " + address + ".D " + cmd + "\r");
-            bool b = sendto("WR " + address + ".D " + cmd + "\r");
-            if (b)
+            string cmdStr = "WR " + address + ".D " + cmd + "\r";
+            byte[] recBytes = SendAndRecivefrom(Encoding.ASCII.GetBytes(cmdStr), out readLength);
+
+            if (recBytes != null)
             {
-                byte[] bytes = Recivefrom(out readLength);
-                if (bytes != null)
+                string recStr = Encoding.ASCII.GetString(recBytes, 0, readLength);
+                if ("OK\r\n".Equals(recStr))
                 {
-                    str = Encoding.ASCII.GetString(bytes, 0, readLength);
-                    if ("OK\r\n".Equals(str))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        //MessageBox.Show(str);
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-            return b;
+            return false;
         }
 
         public bool Write(string address, int cmd)
         {
-            string str = "";
             int readLength;
-            //MessageBox.Show("WRS " + address + ".U " + ushorts.Length + str + "\r");
-            bool b = sendto("WR " + address + ".L " + cmd + "\r");
-            if (b)
+            string cmdStr = "WR " + address + ".L " + cmd + "\r";
+            byte[] recBytes = SendAndRecivefrom(Encoding.ASCII.GetBytes(cmdStr), out readLength);
+
+            if (recBytes != null)
             {
-                byte[] bytes = Recivefrom(out readLength);
-                if (bytes != null)
+                string recStr = Encoding.ASCII.GetString(recBytes, 0, readLength);
+                if ("OK\r\n".Equals(recStr))
                 {
-                    str = Encoding.ASCII.GetString(bytes, 0, readLength);
-                    if ("OK\r\n".Equals(str))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        //MessageBox.Show(str);
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-            return b;
+            return false;
         }
 
         public bool Write(string address, uint[] cmd)
@@ -352,22 +358,19 @@ namespace KeyneceTool
             {
                 cmdStr = cmdStr + " " + cmd[i];
             }
-            bool b = sendto("WRS " + address + ".D " + cmd.Length + cmdStr + "\r");
-            if (b)
+            cmdStr = "WRS " + address + ".D " + cmd.Length + cmdStr + "\r";
+            byte[] recBytes = SendAndRecivefrom(Encoding.ASCII.GetBytes(cmdStr), out readLength);
+
+            if (recBytes != null)
             {
-                byte[] bytes = Recivefrom(out readLength);
-                if (bytes != null)
+                string recStr = Encoding.ASCII.GetString(recBytes, 0, readLength);
+                if ("OK\r\n".Equals(recStr))
                 {
-                    cmdStr = Encoding.ASCII.GetString(bytes, 0, readLength);
-                    if ("OK\r\n".Equals(cmdStr))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        //MessageBox.Show(cmdStr);
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
             return false;
@@ -381,22 +384,19 @@ namespace KeyneceTool
             {
                 cmdStr = cmdStr + " " + cmd[i];
             }
-            bool b = sendto("WRS " + address + ".L " + cmd.Length + cmdStr + "\r");
-            if (b)
+            cmdStr = "WRS " + address + ".L " + cmd.Length + cmdStr + "\r";
+            byte[] recBytes = SendAndRecivefrom(Encoding.ASCII.GetBytes(cmdStr), out readLength);
+
+            if (recBytes != null)
             {
-                byte[] bytes = Recivefrom(out readLength);
-                if (bytes != null)
+                string recStr = Encoding.ASCII.GetString(recBytes, 0, readLength);
+                if ("OK\r\n".Equals(recStr))
                 {
-                    cmdStr = Encoding.ASCII.GetString(bytes, 0, readLength);
-                    if ("OK\r\n".Equals(cmdStr))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        //MessageBox.Show(cmdStr);
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
             return false;
@@ -429,25 +429,23 @@ namespace KeyneceTool
 
                 str = str + " " + ushorts[i];
             }
-            bool b = sendto("WRS " + address + ".U " + ushorts.Length + str + "\r");
-            if (b)
+
+            string cmdStr = "WRS " + address + ".U " + ushorts.Length + str + "\r";
+            byte[] recBytes = SendAndRecivefrom(Encoding.ASCII.GetBytes(cmdStr), out readLength);
+
+            if (recBytes != null)
             {
-                byte[] bytes = Recivefrom(out readLength);
-                if (bytes != null)
+                string recStr = Encoding.ASCII.GetString(recBytes, 0, readLength);
+                if ("OK\r\n".Equals(recStr))
                 {
-                    str = Encoding.ASCII.GetString(bytes, 0, readLength);
-                    if ("OK\r\n".Equals(str))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-
-            return b;
+            return false;
         }
 
         #endregion
@@ -456,17 +454,15 @@ namespace KeyneceTool
 
         private bool TryRead(string cmd, out byte[] readResult, out int getLength)
         {
-            bool b = false;
-            byte[] bytes = null;
+            byte[] recBytes = null;
             bool loop = true;
             int readLength = 0;
             while (loop)
             {
-                b = false;
-                bytes = null;
-                b = sendto(cmd);
-                bytes = Recivefrom(out readLength);
-                if (b && bytes != null)
+                recBytes = null;
+                recBytes = SendAndRecivefrom(Encoding.ASCII.GetBytes(cmd), out readLength);
+
+                if (recBytes != null)
                 {
                     loop = false;
                 }
@@ -481,7 +477,7 @@ namespace KeyneceTool
                 }
             }
             getLength = readLength;
-            readResult = bytes;
+            readResult = recBytes;
             return true;
         }
 
